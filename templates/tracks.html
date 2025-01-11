@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Your Saved Tracks</h1>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Track Name</th>
+            <th>Artist</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for track in tracks %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ track.name }}</td>
+                <td>{{ track.artist }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

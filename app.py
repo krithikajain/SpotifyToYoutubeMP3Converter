@@ -2,6 +2,7 @@ from flask import Flask, request, url_for, session, redirect
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time  # Import time module for token expiration checks
+from flask import render_template  # Import render_template
 
 app = Flask(__name__)
 
@@ -49,7 +50,7 @@ def login():
     """
     sp_oauth = create_spotify_oauth()
     auth_url = sp_oauth.get_authorize_url()
-    return redirect(auth_url)
+    return render_template('home.html', title="Home")
 
 
 @app.route('/redirect')
@@ -83,8 +84,29 @@ def getTracks():
     
     sp = spotipy.Spotify(auth=token_info['access_token'])
     results = sp.current_user_saved_tracks(limit=20)  # Fetch 20 saved tracks
-    tracks = [f"{item['track']['name']} by {item['track']['artists'][0]['name']}" for item in results['items']]
-    return f"Your saved tracks:<br>" + "<br>".join(tracks)
+    tracks = [
+            {"name": item['track']['name'], "artist": item['track']['artists'][0]['name']}
+            for item in results['items']]
+    return render_template('tracks.html', title="Saved Tracks", tracks=tracks)
+
+@app.route('/playlists')
+def playlists():
+    """ Display the user's spotify playlists. """
+    try:
+        token_info = get_token()
+    except Exception as e:
+        print("Error: ", e)
+        return redirect("/")
+    
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    results = sp.current_user_playlists(limit=20)
+    playlists = [
+        {"name": playlist['name'],"tracks": playlist['tracks']['total']}
+        for playlist in results['items']
+    ]
+    return render_template('playlists.html', title="Playlists", playlists=playlists)
+
+
 
 
 if __name__ == '__main__':

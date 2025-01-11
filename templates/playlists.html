@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="mb-4">Have a look at your playlists!!</h1>
+<ul class="list-group">
+    {% for playlist in playlists %}
+    <li class="list-group-item">
+        <strong>{{playlist.name}}</strong> ({{playlist.tracks}} tracks)
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
